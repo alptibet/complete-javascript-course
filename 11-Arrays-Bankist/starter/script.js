@@ -125,3 +125,4 @@ movements.forEach(function (movement, index, array) {
     console.log(`Movement ${index + 1}: You withdrew ${Math.abs(movement)}`);
   }
 });
+//END OF SECTION
