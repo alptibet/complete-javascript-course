@@ -139,3 +139,31 @@ movements.forEach(function (movement, index, array) {
   }
 });
 //END OF SECTION
+
+//MAP METHOD
+
+const eurToUsd = 1.1;
+
+const movementsUSD = movements.map(movement => movement * eurToUsd);
+
+console.log(movementsUSD);
+
+const movDescriptions = movements.map((movement, index, array) => {
+  if (movement > 0) {
+    return `Movement ${index + 1}: You deposited ${movement}`;
+  } else {
+    return `Movement ${index + 1}: You withdrew ${Math.abs(movement)}`;
+  }
+});
+
+console.log(movDescriptions);
+
+const userName = 'Steven Thomas Williams';
+const user = userName
+  .toLowerCase()
+  .split(' ')
+  .map(id => {
+    return id[0];
+  })
+  .join('');
+console.log(user);
