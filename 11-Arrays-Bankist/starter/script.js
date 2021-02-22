@@ -74,6 +74,33 @@ const displayMovements = function (movements) {
   });
 };
 displayMovements(account1.movements);
+
+const createUsernames = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+
+const calcPrintBalance = function (accs) {
+  accs.forEach(function (acc) {
+    acc.balance = acc.movements.reduce(function (acc, curVal) {
+      return acc + curVal;
+    });
+    labelBalance.textContent = `${acc.balance} EUR`;
+  });
+};
+
+calcPrintBalance(accounts);
+console.log(account1.balance);
+console.log(account2.balance);
+console.log(account3.balance);
+console.log(account4.balance);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -158,12 +185,41 @@ const movDescriptions = movements.map((movement, index, array) => {
 
 console.log(movDescriptions);
 
-const userName = 'Steven Thomas Williams';
-const user = userName
-  .toLowerCase()
-  .split(' ')
-  .map(id => {
-    return id[0];
-  })
-  .join('');
-console.log(user);
+//FILTER METHOD
+
+const deposits = movements.filter(function (mov) {
+  return mov > 0;
+});
+
+console.log(deposits);
+
+const withdrawals = movements.filter(function (mov) {
+  return mov < 0;
+});
+
+console.log(withdrawals);
+
+//REDUCE METHOD
+
+const balance = movements.reduce(function (acc, mov, index, array) {
+  console.log(`Iteration ${index}: ${acc}`);
+  return acc + mov;
+}, 0);
+
+console.log(balance);
+
+//MAXIMUM VALUE
+
+const max = movements.reduce(function (acc, mov) {
+  return acc > mov ? acc : mov;
+}, movements[0]);
+
+console.log(max);
+
+//MINIMUM VALUE
+
+const min = movements.reduce(function (acc, mov) {
+  return acc < mov ? acc : mov;
+}, movements[0]);
+
+console.log(min);
