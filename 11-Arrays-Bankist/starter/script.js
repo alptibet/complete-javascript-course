@@ -59,9 +59,9 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
+const displayMovements = function (account) {
   containerMovements.innerHTML = '';
-  movements.forEach(function (movement, index) {
+  account.movements.forEach(function (movement, index) {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${
@@ -85,8 +85,16 @@ const createUsernames = function (accs) {
 };
 
 createUsernames(accounts);
+//UPDATE UI
+const updateUI = function (account) {
+  displayMovements(account);
+  calcDisplayBalance(account);
+  calcDisplaySummary(account);
+};
 
 //EVENT HANDLERS
+
+//LOGIN
 let currentAccount;
 btnLogin.addEventListener('click', e => {
   e.preventDefault(); //Prevent form from submitting
@@ -103,18 +111,53 @@ btnLogin.addEventListener('click', e => {
     //Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
-    //Display movements
-    displayMovements(currentAccount.movements);
-    //Display balance
-    calcPrintBalance(currentAccount.movements);
-    //Display summary
-    calcDisplaySummary(currentAccount);
+    updateUI(currentAccount);
   }
 });
-//////////////////////////
-const calcPrintBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = `${balance} EUR`;
+//TRANSFER
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault();
+  const amountToTransfer = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+  inputTransferAmount.value = inputTransferTo.value = '';
+  if (
+    amountToTransfer > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amountToTransfer &&
+    receiverAcc?.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amountToTransfer);
+    receiverAcc.movements.push(amountToTransfer);
+  } else {
+    alert('Transfer not valid!');
+  }
+  console.log(currentAccount, receiverAcc);
+  updateUI(currentAccount);
+});
+
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    //Delete account
+    accounts.splice(index, 1);
+    //Hide Ui
+    containerApp.style.opacity = 0;
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
+});
+////////////////////////////
+const calcDisplayBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov);
+  labelBalance.textContent = `${account.balance} EUR`;
   console.log(balance);
 };
 
@@ -268,3 +311,5 @@ console.log(accounts);
 
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 console.log(account);
+
+//FINDINDEX returns the index of the first element that satisfies the condition
