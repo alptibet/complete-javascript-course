@@ -59,9 +59,14 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (account) {
+const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
-  account.movements.forEach(function (movement, index) {
+
+  const movs = sort
+    ? account.movements.slice().sort((a, b) => a - b)
+    : account.movements;
+
+  movs.forEach(function (movement, index) {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${
@@ -84,7 +89,32 @@ const createUsernames = function (accs) {
   });
 };
 
+const calcDisplayBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov);
+  labelBalance.textContent = `${account.balance} EUR`;
+  console.log(balance);
+};
+
 createUsernames(accounts);
+
+const calcDisplaySummary = function (account) {
+  const incomes = account.movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes} EUR`;
+  const outgoing = account.movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(outgoing)} EUR`;
+
+  const interest = account.movements
+    .filter(mov => mov >= 0)
+    .map(deposit => (deposit * account.interestRate) / 100)
+    .filter(interest => interest >= 1)
+    .reduce((acc, int) => acc + int, 0);
+  labelSumInterest.textContent = `${interest.toFixed(2)} EUR`;
+};
+
 //UPDATE UI
 const updateUI = function (account) {
   displayMovements(account);
@@ -93,7 +123,6 @@ const updateUI = function (account) {
 };
 
 //EVENT HANDLERS
-
 //LOGIN
 let currentAccount;
 btnLogin.addEventListener('click', e => {
@@ -110,6 +139,7 @@ btnLogin.addEventListener('click', e => {
     containerApp.style.opacity = 100;
     //Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoanAmount.value = '';
     inputLoginPin.blur();
     updateUI(currentAccount);
   }
@@ -154,30 +184,28 @@ btnClose.addEventListener('click', e => {
   }
   inputCloseUsername.value = inputClosePin.value = '';
 });
-////////////////////////////
-const calcDisplayBalance = function (account) {
-  account.balance = account.movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = `${account.balance} EUR`;
-  console.log(balance);
-};
-
-const calcDisplaySummary = function (account) {
-  const incomes = account.movements
-    .filter(mov => mov > 0)
-    .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes} EUR`;
-  const outgoing = account.movements
-    .filter(mov => mov < 0)
-    .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(outgoing)} EUR`;
-
-  const interest = account.movements
-    .filter(mov => mov >= 0)
-    .map(deposit => (deposit * account.interestRate) / 100)
-    .filter(interest => interest >= 1)
-    .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)} EUR`;
-};
+//LOAN
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+  const loanAmount = Number(inputLoanAmount.value);
+  if (
+    loanAmount > 0 &&
+    currentAccount.movements.some(mov => mov >= loanAmount / 10)
+  ) {
+    //Add movement
+    currentAccount.movements.push(loanAmount);
+    //Update UI
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = '';
+});
+//SORT
+let sorting = false;
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  displayMovements(currentAccount, !sorting);
+  sorting = !sorting;
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -313,3 +341,91 @@ const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 console.log(account);
 
 //FINDINDEX returns the index of the first element that satisfies the condition
+
+//Passing callbacks to array methods
+
+const deposit = mov => mov > 0;
+console.log(movements.some(deposit));
+console.log(movements.every(deposit));
+console.log(movements.filter(deposit));
+
+//flat and flatmap methods
+
+const arrFlat = [[1, 2, 3], [4, 5, 6], 7, 8];
+console.log(arrFlat.flat());
+const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+console.log(arrDeep.flat(2));
+
+const accountMovements = accounts.map(acc => acc.movements);
+const allMovements = accountMovements.flat();
+const totalMovements = allMovements.reduce((acc, mov) => acc + mov, 0);
+console.log(accountMovements);
+console.log(allMovements);
+console.log(totalMovements);
+
+//OR chain
+const totalMovementsChain = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(totalMovementsChain);
+
+//OR flatmap
+
+const totalMovementsChain3 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(totalMovementsChain3);
+
+//SORTING - sort method sorts according to strings!!!
+//return <0 a will be before b or vice versa
+
+//Ascending
+movements.sort((a, b) => {
+  if (a > b) return 1;
+  if (b > a) return -1;
+});
+//OR
+movements.sort((a, b) => a - b);
+console.log(movements);
+//Descending
+movements.sort((a, b) => {
+  if (a > b) return -1;
+  if (b > a) return 1;
+});
+//OR
+movements.sort((a, b) => b - a);
+console.log(movements);
+
+//Creating arrays
+
+const arrx = [1, 2, 3, 4, 5, 6, 7];
+console.log(new Array(1, 2, 3, 4, 5, 6, 7));
+
+//Empty arrays + fill method
+
+const x = new Array(7);
+console.log(x);
+
+x.fill(1, 3, 5);
+console.log(x);
+x.fill(1);
+console.log(x);
+arrx.fill(23, 2, 6);
+console.log(arr);
+
+//Array.from method
+const arrFrom = Array.from({ length: 7 }, () => 1);
+console.log(arrFrom);
+
+const z = Array.from({ length: 7 }, (_, i) => i + 1); //_ is throwaway argument
+console.log(z);
+
+labelBalance.addEventListener('click', () => {
+  const movementsUI = Array.from(
+    document.querySelectorAll('.movements__value'),
+    el => el.textContent.replace('€', '')
+  );
+  console.log(movementsUI);
+});
