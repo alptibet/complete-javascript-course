@@ -429,3 +429,29 @@ labelBalance.addEventListener('click', () => {
   );
   console.log(movementsUI);
 });
+
+const { depo, withd } = accounts
+  .flatMap(acc => acc.movements)
+  .reduce(
+    (sums, cur) => {
+      sums[cur > 0 ? 'depo' : 'withd'] += cur;
+      return sums;
+    },
+    { depo: 0, withd: 0 }
+  );
+console.log(depo, withd);
+
+const convertTitleCase = function (title) {
+  const exceptions = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with'];
+
+  const titleCase = title
+    .toLowerCase()
+    .split(' ')
+    .map(word =>
+      exceptions.includes(word) ? word : word[0].toUpperCase() + word.slice(1)
+    )
+    .join(' ');
+  return titleCase;
+};
+
+console.log(convertTitleCase('This is a Title'));
