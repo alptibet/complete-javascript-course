@@ -251,3 +251,56 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+//Converting string to number
+
+console.log(Number('23'));
+console.log(+'23');
+
+//Parsing - string has to start with a number
+console.log(Number.parseInt('30px', 10));
+console.log(Number.parseFloat('2.5rem'));
+//isNaN
+
+console.log(Number.isNaN(20));
+console.log(Number.isNaN('20'));
+console.log(Number.isNaN(+'20px'));
+console.log(Number.isNaN(23 / 0));
+
+//Best way of checking if a value is a number
+console.log(Number.isFinite(20));
+console.log(Number.isFinite(23 / 0));
+
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min) + 1) + min;
+
+//Rounding Integers
+console.log(Math.round(23.3));
+console.log(Math.round(23.9));
+
+console.log(Math.ceil(23.3));
+console.log(Math.ceil(23.9));
+
+console.log(Math.floor(23.3));
+console.log(Math.floor('23.9'));
+
+console.log(Math.trunc(23.3));
+
+console.log(Math.trunc(-23.3));
+console.log(Math.floor(-23.3));
+
+//Rounding Decimals toFixed returns a string!!!
+console.log((2.7).toFixed(0));
+console.log((2.7).toFixed(3));
+console.log((2.2345).toFixed(2));
+console.log(+(2.2345).toFixed(2)); //return number!!
+
+//Remainder operator
+labelBalance.addEventListener('click', () => {
+  [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
+    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
+    if (i % 3 === 0) row.style.backgroundColor = 'blue';
+  });
+});
+
+//BigINT
