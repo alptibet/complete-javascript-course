@@ -60,7 +60,6 @@ const labelSumIn = document.querySelector('.summary__value--in');
 const labelSumOut = document.querySelector('.summary__value--out');
 const labelSumInterest = document.querySelector('.summary__value--interest');
 const labelTimer = document.querySelector('.timer');
-
 const containerApp = document.querySelector('.app');
 const containerMovements = document.querySelector('.movements');
 
@@ -411,6 +410,7 @@ labelBalance.addEventListener('click', () => {
 
 // const future = new Date(2037, 10, 19, 15, 23);
 // console.log(+future);
+<<<<<<< HEAD
 
 const num = 342342345.23;
 
@@ -440,3 +440,5 @@ setInterval(function () {
   const seconds = now.getSeconds();
   //console.log(`${hours}:${minutes}:${seconds}`);
 }, 1000);
+=======
+>>>>>>> 140b227098f599e5d8924ac4a508c1698d53b27b
